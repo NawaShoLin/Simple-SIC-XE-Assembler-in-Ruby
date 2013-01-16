@@ -74,7 +74,15 @@ class TestAssembler < Test::Unit::TestCase
   end
   
   def test_opcode_to_binary
-    assert_equal 0xB410, Assembler.new.opcode_to_binary("CLEAR", "X")
+    assert_equal [0xB410, 2], Assembler.new.opcode_to_binary("CLEAR", "X", 0)
+  end
+  
+  def test_pass_two
+    asm = Assembler.new
+    asm.read_sourse(File.read "test.asm")
+    asm.pass_one
+    asm.pass_two
+    #asm.print_table
   end
  
 end
