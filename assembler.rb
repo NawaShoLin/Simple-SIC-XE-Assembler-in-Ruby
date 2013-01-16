@@ -10,6 +10,8 @@ class Assembler
   def initialize
     @lines = []
     @symbols = {}
+    @begin_loc = 0
+    @title = nil
   end
   
   def read_sourse(sourse)
@@ -22,9 +24,9 @@ class Assembler
     loc_ctr = 0
     
     if @lines.first[:operator] == "START"
-      start_loc = @lines.first[:operand].to_i
-      raise "no operand at START line" if not start_loc
-      loc_ctr = start_loc
+      @begin_loc = @lines.first[:operand].to_i
+      raise "no operand at START line" if not @begin_loc
+      loc_ctr = @begin_loc
     end    
     
     @lines.each do |line|
@@ -33,9 +35,22 @@ class Assembler
         raise "more than 2 same labels: #{label}" if @symbols.has_key? label
         @symbols[label] = loc_ctr
       end
+      line[:loc] = loc_ctr
       loc_ctr += Assembler.output_length line
     end
   end  # end pass_one
+  
+  def pass_two
+    @title = @lines.first[:label] if @lines.first[:operator] == "START"
+    
+    @lines.each do |line|
+      operator, operand, loc = line[:operator], line[:operand], line[:loc]
+      if OP_TABLE.has_key? operator
+      else
+      end
+    end
+    
+  end
   
   # ---- ---- debuging method ---- ----
   def label_loc label
@@ -115,5 +130,13 @@ class Assembler
           
     length 
   end # end output_length
+  
+  def self.format4? operator
+    /\+\S+/.match operator
+  end
+  
+  def opcode_to_binary operator, operand
+    
+  end
   
 end

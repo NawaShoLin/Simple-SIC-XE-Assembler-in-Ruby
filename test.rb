@@ -15,7 +15,8 @@ class TestAssembler < Test::Unit::TestCase
     ["COPY START 0", {:label => 'COPY', :operator => 'START', :operand => "0"}],
     ["CLOOP +JSUB RDREC", {:label => 'CLOOP', :operator => '+JSUB', :operand => "RDREC"}],
     ["\tEOF BYTE\tC'EOF'", {:label => 'EOF', :operator => 'BYTE', :operand => "C'EOF'"}],
-    ["\tJEQ\tENDFIL", {:label => nil, :operator => 'JEQ', :operand => "ENDFIL"}]  
+    ["\tJEQ\tENDFIL", {:label => nil, :operator => 'JEQ', :operand => "ENDFIL"}],
+    
     ]
     
     pairs.each do |a|
@@ -57,9 +58,14 @@ class TestAssembler < Test::Unit::TestCase
   
   def test_pass_one
     asm = Assembler.new
-    asm.read_sourse(File.read "normalsicxe.asm")
+    asm.read_sourse(File.read "test.asm")
     asm.pass_one
-    asm.print_table
+    #asm.print_table
+  end
+  
+  def test_format4?
+    assert Assembler.format4?("+JSUB")
+    assert !Assembler.format4?("JEQ")
   end
  
 end
