@@ -1,6 +1,6 @@
 #!usr/bin/ruby
 $LOAD_PATH << "."
-require 'opcode_table'
+require 'asm_const_table'
 
 class Assembler
   
@@ -135,8 +135,22 @@ class Assembler
     /\+\S+/.match operator
   end
   
+  def self.operand_pair operand # TO DO : C','
+    a,b = operand.split(/\s*,\s*/)
+    return a,b
+  end
+  
+  public #testing
   def opcode_to_binary operator, operand
-    
+    op = OP_TABLE[operator][:opcode]
+    if OP_TABLE[operator][:format] == 2
+      r1, r2 = Assembler.operand_pair operand
+      r1 = (r1 && REG_TABLE[r1]) || 0
+      r2 = (r2 && REG_TABLE[r2]) || 0
+      return (op << 8) + (r1 << 4) + r2
+    elsif Assembler.format4? operator
+    else # format 3
+    end
   end
   
 end

@@ -67,5 +67,14 @@ class TestAssembler < Test::Unit::TestCase
     assert Assembler.format4?("+JSUB")
     assert !Assembler.format4?("JEQ")
   end
+  
+  def test_operand_pair
+    assert_equal ["BUFFER", "X"], Assembler.operand_pair("BUFFER , X")
+    assert_equal ["X'F1'", nil], Assembler.operand_pair("X'F1'")
+  end
+  
+  def test_opcode_to_binary
+    assert_equal 0xB410, Assembler.new.opcode_to_binary("CLEAR", "X")
+  end
  
 end

@@ -25,7 +25,12 @@ OPCODE_TABLE = {
 
 FAKE_OPS = ["START","END","BYTE","WORD","RESB","RESW", "BASE"]
 
-def paser_regex
+REG_TABLE = {
+  "A" => 0, "X" => 1, "L" => 2, "PC" => 8, "SW" => 9,
+  "B" => 3, "S" => 4, "T" => 5, "F" => 6
+}
+
+def paser_regex # TO DO : Space in operaand like C' '
   ops = (OPCODE_TABLE.keys + FAKE_OPS).sort_by{|x| -x.length}
   operator =  ops.join('|')
   operator = "(?<operator>\\+?(#{operator}))"
