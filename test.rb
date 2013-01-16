@@ -57,9 +57,9 @@ class TestAssembler < Test::Unit::TestCase
   end
   
   def test_pass_one
-    asm = Assembler.new
-    asm.read_sourse(File.read "test.asm")
-    asm.pass_one
+   # asm = Assembler.new
+   # asm.read_sourse(File.read "test.asm")
+   # asm.pass_one
     #asm.print_table
   end
   
@@ -78,11 +78,19 @@ class TestAssembler < Test::Unit::TestCase
   end
   
   def test_pass_two
-    asm = Assembler.new
-    asm.read_sourse(File.read "test.asm")
-    asm.pass_one
+   # asm = Assembler.new
+   # asm.read_sourse(File.read "test.asm")
+   # asm.pass_one
     
-    #assert_equal asm.operand_value("RETADR"), 0x30
+   # assert_equal "LDB", Assembler.pure_op("LDB")
+   # assert_equal asm.operand_value("RETADR"), 0x30
+   # assert_equal asm.operand_value("#LENGTH"), 0x33
+   # assert_equal [0x69202D,3], asm.opcode_to_binary("LDB", "#LENGTH", 0x03)
+    
+   # f = Assembler::Flag.new
+   # f.format3
+   # f.set_by_operand "#LENGTH"
+    #assert_equal 0x12, f.to_binary
     #asm.pass_two true"
     #asm.print_table
   end

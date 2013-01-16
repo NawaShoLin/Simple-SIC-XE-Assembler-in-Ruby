@@ -175,6 +175,10 @@ class Assembler
     return a,b
   end
   
+  def self.pure_op op
+    op.match(/\+?(\w+)/)[1]
+  end
+  
   def operand_value operand
     operand, = Assembler.operand_pair operand
     operand  = operand.match(/(#|@|)?(?<operand>\w+)/)[:operand]
@@ -189,7 +193,7 @@ class Assembler
   
   public #testing
   def opcode_to_binary operator, operand, pc
-    p_op = operator.match(/\+?(\w+)/)[1]
+    p_op = Assembler.pure_op operator
     op = OP_TABLE[p_op][:opcode]
     flags = Flag.new
     
@@ -203,31 +207,36 @@ class Assembler
       flags.format4
       flags.set_by_operand operand    
       @writer.add_m pc if not flags.imm_num?
-      return (op << 26) + (flags.to_binary << 20) + operand_value(operand), 4
+      return (op << 24) + (flags.to_binary << 20) + operand_value(operand), 4
       
     else # format 3
+      pc += 3
       flags.format3
       flags.set_by_operand operand
       
       if flags.imm_num?
-        return (op << 18) + (flags.to_binary << 12) + operand_value(operand), 3
+        return (op << 16) + (flags.to_binary << 12) + operand_value(operand), 3
         
-      elsif operand
+      elsif operand        
         ta = operand_value(operand) 
         if pc - 2048 <= ta and pc + 2047 >= ta
+                    
           flags.pc_relative
           disp = ta - pc
-          disp = (1<<12) + disp if disp < 0
-          return (op << 18) + (flags.to_binary << 12) + disp, 3
+          disp = (1<<12) + disp if disp < 0          
+          return (op << 16) + (flags.to_binary << 12) + disp, 3
+          
         elsif @base && (@base <= ta) &&  (ta <= @base + 4095)
           flags.base_relative
-          return (op << 18) + (flags.to_binary << 12) + ta - @base, 3
+          return (op << 16) + (flags.to_binary << 12) + ta - @base, 3
+          
         else 
           raise "operand too large"
+          
         end
         
       else
-        return (op << 18), 3
+        return (op << 16), 3
       end
     end
   end
