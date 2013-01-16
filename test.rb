@@ -81,7 +81,9 @@ class TestAssembler < Test::Unit::TestCase
     asm = Assembler.new
     asm.read_sourse(File.read "test.asm")
     asm.pass_one
-    asm.pass_two
+    
+    #assert_equal asm.operand_value("RETADR"), 0x30
+    #asm.pass_two true"
     #asm.print_table
   end
  

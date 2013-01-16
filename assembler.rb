@@ -42,7 +42,7 @@ class Assembler
     end
   end  # end pass_one
   
-  def pass_two
+  def pass_two debug = nil
     @title = @lines.first[:label] if @lines.first[:operator] == "START"
     @title = "NONE" if not @title
     if @title
@@ -55,10 +55,13 @@ class Assembler
     
     
     @lines.each do |line|
+      puts "#{line[:loc]}\t#{line[:operator]}\t#{line[:operand]}" if debug ####
+      
       operator, operand, loc = line[:operator], line[:operand], line[:loc]
       output = nil
       if OP_TABLE.has_key? operator.match(/\+?(\w+)/)[1]
         bin, format = opcode_to_binary(operator, operand, loc)
+        puts bin.to_s(16) if debug ####
         @writer.write loc, bin, nil, :format => format
       elsif FAKE_OPS.index operator
         case operator
@@ -78,6 +81,10 @@ class Assembler
       end
     end
     
+  end
+  
+  def print s
+    @writer.print s
   end
   
   # ---- ---- debuging method ---- ----
@@ -195,7 +202,7 @@ class Assembler
     elsif Assembler.format4? operator
       flags.format4
       flags.set_by_operand operand    
-      @writer.add_m pc if flags.imm_num?
+      @writer.add_m pc if not flags.imm_num?
       return (op << 26) + (flags.to_binary << 20) + operand_value(operand), 4
       
     else # format 3
@@ -330,6 +337,16 @@ class Assembler
       @f_exe = nil
     end
     
+    def print s
+      s.puts @title
+      @doc.each{|t| s.puts t.upcase}
+      @ms.each{|m| s.puts m.upcase}
+      
+      e = @f_exe.to_s(16).upcase
+      e = ("0" * (6-e.length)) + e
+      s.puts "E#{e}"
+    end
+    
     def write_title title, start_loc
       @start_loc = start_loc
       title = title[0..5] if title.length > 6
@@ -359,9 +376,6 @@ class Assembler
       end
       
       @now_loc = @start_loc if not @now_loc
-      if option[:end]
-        # to do
-      end
       
       if bin
         @f_exe = loc if not @f_exe
