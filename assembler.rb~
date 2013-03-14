@@ -379,7 +379,7 @@ class Assembler
     
     def write(loc, bin = nil, str = nil, option = {})
       def add_len line, len_plus
-        len = (line[7..8].to_i(16) + len_plus).to_s(16)
+        len = (line[7..8].to_i(16) + len_plus).to_s
         len = "0" + len if len.length == 1
         line[7..8] = len
       end
